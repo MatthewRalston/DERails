@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  get 'expression/maplot'
+
+  get 'expression/correlation'
+
   get 'expression_difference/maplot'
 
   # The priority is based upon order of creation: first created -> highest priority.
