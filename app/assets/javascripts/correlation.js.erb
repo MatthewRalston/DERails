@@ -1,0 +1,76 @@
+// This file contains javascript code for producing correlation plots
+// replicate 1 on y axis
+
+var test
+
+function correlation() {
+
+  var margin = {top: 10, right: 10, bottom: 30, left: 50},
+  width = document.getElementById("graph").clientWidth,
+  height = width,
+  svg = d3.select("body #graph")
+	  .append("div").append("svg")
+	  .attr("id","correlationsvg")
+	  .attr("width",width).attr("height",height),
+  xScale = d3.scale.log()
+		   .domain([1,d3.max(dataset,function(d){return d.exp2;})])
+		   .range([0,width]),
+  yScale = d3.scale.log()
+		   .domain([1,d3.max(dataset,function(d){return d.exp1;})])
+		   .range([height,0]),
+  xAxis = d3.svg.axis()
+		.scale(xScale)
+	 .orient("bottom"),
+  yAxis = d3.svg.axis()
+		.scale(yScale)
+	 .orient("left"),
+  radius = 5
+  
+  svg.append("g")
+     .attr("class", "x axis")
+     .attr("transform","translate("+margin.left+","+margin.top+")")
+     .call(xAxis);
+  d3.selectAll(".x").selectAll(".tick text")
+    .text(null)
+    .filter(powerOfTen)
+  .text(10)
+  .append("tspan")
+  .attr("dy","-.7em").style("font-size","6pt")
+  .text(function(d){return Math.round(Math.log(d) / Math.LN10)})
+  
+  svg.append("g")
+     .attr("class", "y axis")
+     .attr("transform","translate("+margin.left+","+margin.top+")")
+     .call(yAxis);
+  d3.selectAll(".y").selectAll(".tick text")
+    .text(null)
+    .filter(powerOfTen)
+  .text(10)
+  .append("tspan")
+  .attr("dy","-.7em").style("font-size","6pt")
+  .text(function(d){return Math.round(Math.log(d) / Math.LN10)})
+  svg.selectAll("circle")
+     .data(dataset)
+     .enter()
+     .append("circle")
+     .attr({
+       cx: function(d) {return xScale(d.exp2)+margin.left;},
+       cy: function(d) {return yScale(d.exp1)+margin.top;},
+       r: radius,
+       id: function(d) {return d.gene;},
+       xexpression: function(d) {return d.exp2},
+       yexpression: function(d) {return d.exp1}
+     });
+  circles = d3.selectAll("circle");
+  circles.on("mouseover",function(d){
+    selected = d3.select(this);
+    selected.transition().attr("r",radius*2);
+  }).on("mouseout",function(d){
+    selected = d3.select(this);
+    selected.transition().attr("r",radius);
+  });
+}
+
+function powerOfTen(d){return d/Math.pow(10,Math.ceil(Math.log(d)/Math.LN10 - 1e-12)) === 1;}
+
+

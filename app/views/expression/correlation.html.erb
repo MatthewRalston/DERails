@@ -1,0 +1,65 @@
+<h1>Correlation</h1>
+<p>Find me in app/views/expression/correlation.html.erb</p>
+
+<%= form_tag({:controller => :expression, :action => :correlation}, :method => :get, :id => 'dataForm') do %>
+  <% if @errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@errors.count,"error") %> prohibited the visualization:</h2>
+      <ul>
+	<% @errors.each do |msg| %>
+	  <li><%= msg %></li>
+	<% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="row" id="conditions">
+    <div class="large-2 small-2 columns">
+      <%= label_tag :time, "Time"%>
+    </div>
+    <div class="large-2 small-2 columns">
+      <%= select_tag(:time, options_for_select(@times)) %>
+    </div>
+    <div class="large-2 small-2 columns">
+      <%= label_tag :condition, "Condition"%>
+    </div>
+    <div class="large-2 small-2 columns">
+      <%= select_tag(:condition, options_for_select(@conditions)) %>
+    </div>
+  </div>
+  <div class="row" id="replicates">
+    <div class="large-2 small-2 columns">
+      <%= label_tag :replicate1, "Replicate 1"%>
+    </div>
+    <div class="large-1 small-1 columns">
+      <%= select_tag(:replicate1, options_for_select(@replicates)) %>
+    </div>
+    <div class="large-2 small-2 columns">
+      <%= label_tag :replicate2, "Replicate 2"%>
+    </div>
+    <div class="large-1 small-1 columns">
+      <%= select_tag(:replicate2, options_for_select(@replicates)) %>
+    </div>
+    <div class="large-2 small-2 columns">
+      <%= submit_tag "Submit", :name => nil, :class => "submit" %>
+    </div>
+  </div>
+<% end %>
+
+<% if @dataset %>
+  <div class="row">
+    <div class="small-10 large-10 columns" id="graph">
+
+    </div>
+  </div>
+  <%= javascript_include_tag "jquery.js" %>
+  <%= javascript_include_tag "d3.v3.min.js" %>
+  <%= javascript_include_tag "correlation.js" %>
+
+  <script>
+   dataset = <%= raw @dataset.to_json %>;
+   $(window).bind("load",correlation)
+
+  </script>
+  
+<% end %>
+
