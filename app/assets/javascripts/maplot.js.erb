@@ -1,25 +1,27 @@
-// This file contains javascript code for producing correlation plots
-// replicate 1 on y axis
+// This file contains javascript code for producing MA plots
+
 
 var test
 
-function correlation() {
+function maplot() {
   
   var margin = {top: 10, right: 400, bottom: 200, left: 50},
   width = document.getElementById("graph").clientWidth,
   height = width,
   svg = d3.select("body #graph")
 	  .append("svg")
-	  .attr("id","correlationsvg")
+	  .attr("id","maplotsvg")
 	  .attr("width",width+margin.left+margin.right).attr("height",height+margin.top+margin.bottom)
 	  .append("g")
 	  .attr("transform","translate(" + margin.left + "," + margin.top + ")");
   xScale = d3.scale.log()
-		   .domain([1,d3.max(dataset,function(d){return d.exp2;})])
+		   .domain([1,d3.max(dataset,function(d){return d.expression;})])
 		   .range([0,width]),
-  yScale = d3.scale.log()
-		   .domain([1,d3.max(dataset,function(d){return d.exp1;})])
+  yScale = d3.scale.linear()
+		   .domain([d3.min(dataset,function(d){return d.foldchange}),d3.max(dataset,function(d){return d.foldchange;})])
 		   .range([height,0]),
+  fillScale = d3.scale.linear()
+		      .domain([d3.min(dataset,function(d){return d.pval}),d3.max(dataset,function(d){return d.pval})])
   xAxis = d3.svg.axis()
 		.scale(xScale)
 	 .orient("bottom"),
@@ -29,8 +31,9 @@ function correlation() {
   timing = 100
   radius = 5,
   radius_multiplier = 3,
+  min = 0
   selected_fill = "#00FFFF"
-  default_fill = "#000"
+  default_fill = ""
   
   svg.append("g")
      .attr("class", "x axis")
@@ -50,46 +53,62 @@ function correlation() {
      .call(yAxis);
   d3.selectAll(".y").selectAll(".tick text")
      .text(null)
-     .filter(powerOfTen)
-     .text(10)
+     .text(2)
      .append("tspan")
      .attr("dy","-.7em").style("font-size","6pt")
-     .text(function(d){return Math.round(Math.log(d) / Math.LN10)});
+     .text(function(d){return d})
   svg.selectAll("circle")
      .data(dataset)
      .enter()
      .append("circle")
      .attr({
-       cx: function(d) {return xScale(d.exp2) + margin.left;},
-       cy: function(d) {return yScale(d.exp1) + margin.top;},
+       cx: function(d) {return xScale(d.expression) + margin.left;},
+       cy: function(d) {return yScale(d.foldchange) + margin.top;},
+       fill: function(d) {return "rgb("+Math.floor(fillScale(d.pval))+",50," + (255 - Math.floor(fillScale(d.pval))) + ")"},
        r: radius,
        id: function(d) {return d.gene;},
        class: "point",
-       xexpression: function(d) {return d.exp2},
-       yexpression: function(d) {return d.exp1}
+       foldchange: function(d) {return d.foldchange},
+       expression: function(d) {return d.expression}
      });
+  min = d3.min(dataset,function(d){return d.pval});
   circles = d3.selectAll("circle");
   circles.on("mouseover",function(d){
     selected = d3.select(this);
+    default_fill = selected.style("fill")
     selected.transition().duration(timing)
 	    .attr("r",radius*radius_multiplier)
-	    .style("fill",selected_fill);
+	    //.style("fill",selected_fill);
     d3.select("#tooltip")
     .style("left",(d3.event.pageX + 20) + "px")
     .style("top",(d3.event.pageY + 20) + "px")
     .classed("hidden",false)
     .html("<strong>Id: " + d.gene + "</strong><br/>" +
-	  "<strong>Replicate 1: " + d.exp1.toFixed(2) + "</strong><br/>" +
-	  "<strong>Replicate 2: " + d.exp2.toFixed(2) + "</strong>"
+	  "<strong>Fold Change: " + d.foldchange.toFixed(2) + "</strong><br/>" +
+	  "<strong>Avg. Expression: " + d.expression.toFixed(2) + "</strong><br/>" +
+	"<strong> p value: " + d.pval.toFixed(2) + "</strong>"
     )
   }).on("mouseout",function(d){
     selected = d3.select(this);
-    selected.transition().attr("r",radius).style("fill",default_fill);
+    selected.transition().attr("r",radius)
+	    //.style("fill",default_fill);
     d3.select("#tooltip")
       .classed("hidden",true)
   });
+
+  d3.select("#slider").call(d3.slider().axis(true).min(0).max(10).value(1.301).on("slide",function(evt,value) {
+    d3.select("#slidertext").html("Log<sub>10</sub> exponent: -"+Number((value).toFixed(2)) + ", p < " + Number((Math.pow(10,-value).toFixed(2))));
+    updatefill(value);
+  }));
 }
 
 function powerOfTen(d){return d/Math.pow(10,Math.ceil(Math.log(d)/Math.LN10 - 1e-12)) === 1;}
+function powerOfTwo(d) {return d/Math.pow(2,Math.ceil(Math.log(d)/Math.log(2))) === 1;}
 
 
+function updatefill(scale) {
+  fillScale = d3.scale.linear()
+		      .domain([min,scale]).range([0,255]).nice();
+  d3.selectAll("circle")
+    .attr("fill",function(d){return "rgb(" + Math.floor(fillScale(d.pval)) + ",50," + (255 - Math.floor(fillScale(d.pval))) + ")"});
+}

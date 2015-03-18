@@ -1,2 +1,82 @@
-<h1>Expression#maplot</h1>
-<p>Find me in app/views/expression/maplot.html.erb</p>
+
+<!DOCTYPE html>
+<html lang="en">
+  <head
+
+  </head>
+  <body>
+
+    <h1>Maplot</h1>
+    <p>Find me in app/views/expression/maplot.html.erb</p>
+
+    <%= form_tag({:controller => :expression, :action => :maplot}, :method => :get, :id => 'dataForm') do %>
+      <% if @errors.any? %>
+	<div id="error_explanation">
+	  <h2><%= pluralize(@errors.count,"error") %> prohibited the visualization:</h2>
+	  <ul>
+	    <% @errors.each do |msg| %>
+	      <li><%= msg %></li>
+	    <% end %>
+	  </ul>
+	</div>
+      <% end %>
+      <div class="row" id="condition_1_row">
+	<div class="large-2 small-2 columns">
+	  <%= label_tag :time1, "Time #1"%>
+	</div>
+	<div class="large-2 small-2 columns">
+	  <%= select_tag(:time1, options_for_select(@times), {include_blank: true}) %>
+	</div>
+	<div class="large-2 small-2 columns">
+	  <%= label_tag :condition1, "Condition #1"%>
+	</div>
+	<div class="large-2 small-2 columns">
+	  <%= select_tag(:condition1, options_for_select(@conditions), {include_blank: true}) %>
+	</div>
+      </div>
+      <div class="row" id="condition_2_row">
+	<div class="large-2 small-2 columns">
+	  <%= label_tag :time2, "Time #2"%>
+	</div>
+	<div class="large-2 small-2 columns">
+	  <%= select_tag(:time2, options_for_select(@times), {include_blank: true}) %>
+	</div>
+	<div class="large-2 small-2 columns">
+	  <%= label_tag :condition2, "Condition #2"%>
+	</div>
+	<div class="large-2 small-2 columns">
+	  <%= select_tag(:condition2, options_for_select(@conditions), {include_blank: true}) %>
+	</div>
+	<div class="large-2 small-2 columns">
+	  <%= submit_tag "Submit", :name => nil, :class => "submit" %>
+	</div>
+      </div>
+
+    <% end %>
+
+    <% if @dataset %>
+      <div class="row">
+      </div>
+      <h2>Significance slider: <span id="slidertext">Log<sub>10</sub> exponent: -1.301, p < 0.05</span></h2>
+      <div id="slider" style="width:600px;"></div>
+	<div class="small-10 large-10 columns" id="graph">
+	  <div id="tooltip" class="hidden">
+	  </div>
+	</div>
+      </div>
+      <%= stylesheet_link_tag "maplot.css" %>
+      <%= stylesheet_link_tag "d3.slider.css" %>
+      <%= javascript_include_tag "jquery.js" %>
+      <%= javascript_include_tag "d3.v3.min.js" %>
+      <%= javascript_include_tag "d3.slider.js" %>
+      <%= javascript_include_tag "maplot.js" %>
+
+      <script>
+       dataset = <%= raw @dataset.to_json %>;
+       $(window).bind("load",maplot)
+
+      </script>
+      
+    <% end %>
+  </body>
+</html>
