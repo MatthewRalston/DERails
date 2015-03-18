@@ -4,6 +4,7 @@ class ExpressionController < ApplicationController
     @times = %w(15 75 150 270)
     @conditions = %w(Untreated Butyrate Butanol)
     @replicates = [1,2,3]
+    @minpval = 10**-10.to_f
   end
 
   def correlation
@@ -30,20 +31,28 @@ class ExpressionController < ApplicationController
     if params[:time1]
       check_maplot_params(params)
       unless @errors.any?
-        @dataset = diffexp_query(params).map{|x| x.as_json.compact}.group_by{|x| x["gene"]}.map{|gene,vals| exps = vals.map{|x| x["expression"] + 1}; {"gene"=>gene,"foldchange"=>vals[0]["foldchange"],"pval"=>vals[0]["pval"],"expression"=>exps.reduce(:+)/exps.size.to_f}}
+        @dataset = diffexp_query(params).map{|x| x.as_json.compact}
+          .group_by{|x| x["gene"]}
+          .map{|gene,vals| 
+          exps = vals.map{|x| x["expression"] + 1}
+          {"gene"=>gene,"foldchange"=>vals[0]["foldchange"],"pval"=>(vals[0]["pval"] < @minpval ? @minpval: vals[0]["pval"]),"expression"=>exps.reduce(:+)/exps.size.to_f}
+        }
+        
       end
     end
   end
 
   private
+
+
   def diffexp_query(params)
-    query = "INNER JOIN expressions ON expressiondifferences.gene = expressions.gene AND expressiondifferences.time1 = expressions.time AND expressiondifferences.condition1 = expressions.condition"
+    query = "INNER JOIN expressions ON expressiondifferences.gene = expressions.gene "
     dataset = if params[:time1] == "" && params[:time2] == ""
-                Expressiondifference.joins(query).where(condition1: params[:condition1], condition2: params[:condition2]).select("expressions.expression,expressions.gene,expressiondifferences.foldchange,expressiondifferences.pval")
+                Expressiondifference.joins(query+"AND expressiondifferences.condition1 = expressions.condition").where(condition1: params[:condition1], condition2: params[:condition2]).select("expressions.expression,expressions.gene,expressiondifferences.foldchange,expressiondifferences.pval")
               elsif params[:condition1] == "" && params[:condition2] == ""
-                Expressiondifference.joins(query).where(time1: params[:time1], time2: params[:time2]).select("expressions.expression,expressions.gene,expressiondifferences.foldchange,expressiondifferences.pval")
+                Expressiondifference.joins(query+"AND expressiondifferences.time1 = expressions.time").where(time1: params[:time1], time2: params[:time2]).select("expressions.expression,expressions.gene,expressiondifferences.foldchange,expressiondifferences.pval")
               else
-                Expressiondifference.joins(query).where(time1: params[:time1], time2: params[:time2], condition1: params[:condition1], condition2: params[:condition2]).select("expressions.expression,expressions.gene,expressiondifferences.foldchange,expressiondifferences.pval")
+                Expressiondifference.joins(query+"AND expressiondifferences.time1 = expressions.time AND expressiondifferences.condition1 = expressions.condition").where(time1: params[:time1], time2: params[:time2], condition1: params[:condition1], condition2: params[:condition2]).select("expressions.expression,expressions.gene,expressiondifferences.foldchange,expressiondifferences.pval")
               end
     dataset
   end

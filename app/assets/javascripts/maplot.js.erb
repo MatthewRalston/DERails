@@ -1,19 +1,28 @@
 // This file contains javascript code for producing MA plots
 
 
-var test
+var test,
+  timing = 100,
+  radius = 5,
+  radius_multiplier = 3,
+  min = 0,
+  scale = 1.301
 
 function maplot() {
   
-  var margin = {top: 10, right: 400, bottom: 200, left: 50},
-  width = document.getElementById("graph").clientWidth,
+  var margin = {top: 10, right: 270, bottom: 100, left: 50},
+  width = document.getElementById("graph").clientWidth - margin.right - margin.left,
   height = width,
   svg = d3.select("body #graph")
 	  .append("svg")
 	  .attr("id","maplotsvg")
 	  .attr("width",width+margin.left+margin.right).attr("height",height+margin.top+margin.bottom)
 	  .append("g")
-	  .attr("transform","translate(" + margin.left + "," + margin.top + ")");
+	  .attr("transform","translate(" + margin.left + "," + margin.top + ")"),
+
+  selected_fill = "#00FFFF",
+  default_fill = ""
+  // SCALES AND AXES
   xScale = d3.scale.log()
 		   .domain([1,d3.max(dataset,function(d){return d.expression;})])
 		   .range([0,width]),
@@ -21,23 +30,17 @@ function maplot() {
 		   .domain([d3.min(dataset,function(d){return d.foldchange}),d3.max(dataset,function(d){return d.foldchange;})])
 		   .range([height,0]),
   fillScale = d3.scale.linear()
-		      .domain([d3.min(dataset,function(d){return d.pval}),d3.max(dataset,function(d){return d.pval})])
+		      .domain([0,scale]).range([0,255]).nice()
   xAxis = d3.svg.axis()
 		.scale(xScale)
 	 .orient("bottom"),
   yAxis = d3.svg.axis()
 		.scale(yScale)
 	 .orient("left"),
-  timing = 100
-  radius = 5,
-  radius_multiplier = 3,
-  min = 0
-  selected_fill = "#00FFFF"
-  default_fill = ""
-  
+
   svg.append("g")
      .attr("class", "x axis")
-     .attr("transform","translate("+margin.left+","+margin.top+")")
+     .attr("transform","translate("+ (margin.left - 10) + "," + margin.top + ")")
      .call(xAxis);
   d3.selectAll(".x").selectAll(".tick text")
     .text(null)
@@ -49,7 +52,7 @@ function maplot() {
   
   svg.append("g")
      .attr("class", "y axis")
-     .attr("transform","translate("+margin.left+","+margin.top+")")
+     .attr("transform","translate("+margin.left + "," + (margin.top - 8) +")")
      .call(yAxis);
   d3.selectAll(".y").selectAll(".tick text")
      .text(null)
@@ -64,12 +67,13 @@ function maplot() {
      .attr({
        cx: function(d) {return xScale(d.expression) + margin.left;},
        cy: function(d) {return yScale(d.foldchange) + margin.top;},
-       fill: function(d) {return "rgb("+Math.floor(fillScale(d.pval))+",50," + (255 - Math.floor(fillScale(d.pval))) + ")"},
+       fill: function(d) {return "rgb("+Math.floor(fillScale(-Math.log10(d.pval)))+",50," + (255 - Math.floor(fillScale(-Math.log10(d.pval))))+ ")"},
        r: radius,
        id: function(d) {return d.gene;},
        class: "point",
        foldchange: function(d) {return d.foldchange},
-       expression: function(d) {return d.expression}
+       expression: function(d) {return d.expression},
+       pval: function(d) {return d.pval}
      });
   min = d3.min(dataset,function(d){return d.pval});
   circles = d3.selectAll("circle");
@@ -84,9 +88,9 @@ function maplot() {
     .style("top",(d3.event.pageY + 20) + "px")
     .classed("hidden",false)
     .html("<strong>Id: " + d.gene + "</strong><br/>" +
-	  "<strong>Fold Change: " + d.foldchange.toFixed(2) + "</strong><br/>" +
+	  "<strong>Fold Change: " + Math.pow(2,d.foldchange).toFixed(2) + "</strong><br/>" +
 	  "<strong>Avg. Expression: " + d.expression.toFixed(2) + "</strong><br/>" +
-	"<strong> p value: " + d.pval.toFixed(2) + "</strong>"
+	"<strong> p value: 10<sup>" + Math.log10(d.pval).toFixed(2) + "</sup></strong>"
     )
   }).on("mouseout",function(d){
     selected = d3.select(this);
@@ -110,5 +114,5 @@ function updatefill(scale) {
   fillScale = d3.scale.linear()
 		      .domain([min,scale]).range([0,255]).nice();
   d3.selectAll("circle")
-    .attr("fill",function(d){return "rgb(" + Math.floor(fillScale(d.pval)) + ",50," + (255 - Math.floor(fillScale(d.pval))) + ")"});
+    .attr("fill",function(d){return "rgb(" + Math.floor(fillScale(-Math.log10(d.pval))) + ",50," + (255 - Math.floor(fillScale(-Math.log10(d.pval)))) + ")"});
 }

@@ -1,11 +1,14 @@
 class CreateClusters < ActiveRecord::Migration
-  def change
+  def up
     create_table :clusters do |t|
       t.integer :group
-      t.string :gene
+      t.string :gene, limit: 10
       t.float :silhouette
 
-      t.timestamps null: false
     end
+  end
+
+  def down
+    drop_table :clusters
   end
 end

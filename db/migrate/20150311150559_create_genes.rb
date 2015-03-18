@@ -1,10 +1,12 @@
 class CreateGenes < ActiveRecord::Migration
-  def change
+  def up
     create_table :genes do |t|
-      t.string :gene
+      t.string :gene, limit: 10
       t.string :url
 
-      t.timestamps null: false
     end
+  end
+  def down
+    drop_table :genes
   end
 end

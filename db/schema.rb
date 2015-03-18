@@ -11,43 +11,39 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150311151427) do
+ActiveRecord::Schema.define(version: 20150315203921) do
 
   create_table "clusters", force: :cascade do |t|
-    t.integer  "group",      limit: 4
-    t.string   "gene",       limit: 255
-    t.float    "silhouette", limit: 24
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.integer "group",      limit: 4
+    t.string  "gene",       limit: 10
+    t.float   "silhouette", limit: 24
   end
 
   create_table "expressiondifferences", force: :cascade do |t|
-    t.string   "gene",       limit: 255
-    t.string   "time1",      limit: 255
-    t.string   "condition1", limit: 255
-    t.string   "time2",      limit: 255
-    t.string   "condition2", limit: 255
-    t.float    "foldchange", limit: 24
-    t.float    "pval",       limit: 24
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.string  "gene",       limit: 10
+    t.integer "time1",      limit: 4
+    t.string  "condition1", limit: 10
+    t.integer "time2",      limit: 4
+    t.string  "condition2", limit: 10
+    t.float   "foldchange", limit: 24
+    t.float   "pval",       limit: 24
   end
+
+  add_index "expressiondifferences", ["gene", "time1", "time2", "condition1", "condition2"], name: "diff_exp", unique: true, using: :btree
 
   create_table "expressions", force: :cascade do |t|
-    t.string   "gene",       limit: 255
-    t.string   "time",       limit: 255
-    t.string   "condition",  limit: 255
-    t.integer  "replicate",  limit: 4
-    t.float    "expression", limit: 24
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.string  "gene",       limit: 10
+    t.integer "time",       limit: 4
+    t.string  "condition",  limit: 10
+    t.integer "replicate",  limit: 4
+    t.float   "expression", limit: 24
   end
 
+  add_index "expressions", ["gene", "time", "condition"], name: "index_expressions_on_gene_and_time_and_condition", using: :btree
+
   create_table "genes", force: :cascade do |t|
-    t.string   "gene",       limit: 255
-    t.string   "url",        limit: 255
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.string "gene", limit: 10
+    t.string "url",  limit: 255
   end
 
 end

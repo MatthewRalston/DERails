@@ -1,13 +1,14 @@
 class CreateExpressions < ActiveRecord::Migration
-  def change
+  def up
     create_table :expressions do |t|
-      t.string :gene
-      t.string :time
-      t.string :condition
+      t.string :gene, limit: 10
+      t.integer :time
+      t.string :condition, limit: 10
       t.integer :replicate
       t.float :expression
-
-      t.timestamps null: false
     end
+  end
+  def down
+    drop_table :expressions
   end
 end
