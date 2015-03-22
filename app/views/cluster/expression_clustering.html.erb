@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  </head>
+  <body>
+
+    <h1>Expression_clustering</h1>
+    <p>Find me in app/views/cluster/expression_clustering.html.erb</p>
+
+    <% if @genes %>
+      <div class="row">
+	<div class="small-10 large-10 columns" id="graph">
+	</div>
+      </div>
+
+      <%= stylesheet_link_tag "expression_clustering.css" %>
+      <%= javascript_include_tag "jquery.js" %>
+      <%= javascript_include_tag "d3.v3.min.js" %>
+      <%= javascript_include_tag "expression_clustering.js" %>
+      <script>
+       times = <%= raw @times.to_json %>
+       conditions = <%= raw @conditions.to_json %>
+
+       clusters = <%= raw @clusters.to_json %>
+       genes = <%= raw @genes.to_json %>
+       matrix = <%= raw @matrix.to_json %>
+       $(window).bind("load",circular);
+      </script>
+
+    <% end %>
+
+  </body>
+</html>

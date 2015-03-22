@@ -6,14 +6,19 @@
   position: absolute;
   width: 300px;
   height: 100px;
-   background-color: white;
-   -webkit-border-radius: 10px;
-   -mox-border-radius: 10px;
-   border-radius: 10px
-   -webkit-box-shadow: 4px 4px 10px rgba(0,0,0,0.4);
-   -moz-box-shadow: 4px 4px 10px rgba(0,0,0,0.4);
-   box-shadow: 4px 4px 10px rgba(0,0,0,0.4);
-   pointer-events: none;
+  background-color: white;
+  -webkit-border-radius: 10px;
+  -mox-border-radius: 10px;
+  border-radius: 10px
+  -webkit-box-shadow: 4px 4px 10px rgba(0,0,0,0.4);
+  -moz-box-shadow: 4px 4px 10px rgba(0,0,0,0.4);
+  box-shadow: 4px 4px 10px rgba(0,0,0,0.4);
+  pointer-events: none;
+}
+
+#rsquare {
+  width: 20px;
+  height: 20px;
 }
 
 .point {
@@ -43,4 +48,10 @@
 #y-label {
   font-size: 15px;
   font-family: sans-serif;
+}
+
+.reg {
+  fill: none;
+  stroke: orange;
+  stroke-width: 1.5px;
 }

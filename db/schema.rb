@@ -14,9 +14,12 @@
 ActiveRecord::Schema.define(version: 20150315203921) do
 
   create_table "clusters", force: :cascade do |t|
-    t.integer "group",      limit: 4
-    t.string  "gene",       limit: 10
-    t.float   "silhouette", limit: 24
+    t.integer "group",           limit: 4
+    t.integer "stress_response", limit: 4
+    t.integer "time_response",   limit: 4
+    t.float   "silhouette",      limit: 24
+    t.float   "dbi",             limit: 24
+    t.float   "dunn",            limit: 24
   end
 
   create_table "expressiondifferences", force: :cascade do |t|
@@ -42,8 +45,9 @@ ActiveRecord::Schema.define(version: 20150315203921) do
   add_index "expressions", ["gene", "time", "condition"], name: "index_expressions_on_gene_and_time_and_condition", using: :btree
 
   create_table "genes", force: :cascade do |t|
-    t.string "gene", limit: 10
-    t.string "url",  limit: 255
+    t.string  "gene",  limit: 10
+    t.integer "group", limit: 4
+    t.string  "url",   limit: 255
   end
 
 end

@@ -1,18 +1,20 @@
 // This file contains javascript code for producing MA plots
 
 
-var test,
+var test
+
+function maplot() {
+  var margin = {top: 30, right: 270, bottom: 100, left: 50},
+  width = document.getElementById("graph").clientWidth - margin.right - margin.left,
+  height = width,
   timing = 100,
   radius = 5,
   radius_multiplier = 3,
   min = 0,
-  scale = 1.301
+  scale = 1.301,
 
-function maplot() {
-  
-  var margin = {top: 10, right: 270, bottom: 100, left: 50},
-  width = document.getElementById("graph").clientWidth - margin.right - margin.left,
-  height = width,
+
+
   svg = d3.select("body #graph")
 	  .append("svg")
 	  .attr("id","maplotsvg")
@@ -33,14 +35,13 @@ function maplot() {
 		      .domain([0,scale]).range([0,255]).nice()
   xAxis = d3.svg.axis()
 		.scale(xScale)
-	 .orient("bottom"),
+	 .orient("top"),
   yAxis = d3.svg.axis()
 		.scale(yScale)
-	 .orient("left"),
-
+	 .orient("left");
   svg.append("g")
      .attr("class", "x axis")
-     .attr("transform","translate("+ (margin.left - 10) + "," + margin.top + ")")
+     .attr("transform","translate("+ margin.left + "," + (margin.top - 10) + ")")
      .call(xAxis);
   d3.selectAll(".x").selectAll(".tick text")
     .text(null)
@@ -48,18 +49,19 @@ function maplot() {
     .text(10)
     .append("tspan")
     .attr("dy","-.7em").style("font-size","6pt")
-    .text(function(d){return Math.round(Math.log(d) / Math.LN10)})
-  
+    .text(function(d){return Math.round(Math.log(d) / Math.LN10)});
   svg.append("g")
      .attr("class", "y axis")
-     .attr("transform","translate("+margin.left + "," + (margin.top - 8) +")")
+     .attr("transform","translate("+ (margin.left - 10) + "," + margin.top +")")
      .call(yAxis);
   d3.selectAll(".y").selectAll(".tick text")
      .text(null)
      .text(2)
      .append("tspan")
      .attr("dy","-.7em").style("font-size","6pt")
-     .text(function(d){return d})
+     .text(function(d){return d});
+  draw_grid(svg);
+  // M A K E   P O I N T S
   svg.selectAll("circle")
      .data(dataset)
      .enter()
@@ -104,15 +106,42 @@ function maplot() {
     d3.select("#slidertext").html("Log<sub>10</sub> exponent: -"+Number((value).toFixed(2)) + ", p < " + Number((Math.pow(10,-value).toFixed(2))));
     updatefill(value);
   }));
-}
-
-function powerOfTen(d){return d/Math.pow(10,Math.ceil(Math.log(d)/Math.LN10 - 1e-12)) === 1;}
-function powerOfTwo(d) {return d/Math.pow(2,Math.ceil(Math.log(d)/Math.log(2))) === 1;}
 
 
-function updatefill(scale) {
-  fillScale = d3.scale.linear()
-		      .domain([min,scale]).range([0,255]).nice();
-  d3.selectAll("circle")
-    .attr("fill",function(d){return "rgb(" + Math.floor(fillScale(-Math.log10(d.pval))) + ",50," + (255 - Math.floor(fillScale(-Math.log10(d.pval)))) + ")"});
+  function powerOfTen(d){return d/Math.pow(10,Math.ceil(Math.log(d)/Math.LN10 - 1e-12)) === 1;}
+  function powerOfTwo(d) {return d/Math.pow(2,Math.ceil(Math.log(d)/Math.log(2))) === 1;}
+
+
+  function updatefill(scale) {
+    fillScale = d3.scale.linear()
+			.domain([min,scale]).range([0,255]).nice();
+    d3.selectAll("circle")
+      .attr("fill",function(d){return "rgb(" + Math.floor(fillScale(-Math.log10(d.pval))) + ",50," + (255 - Math.floor(fillScale(-Math.log10(d.pval)))) + ")"});
+  }
+  // G R I D   L I N E S
+  function draw_grid(svg) {
+    svg.append("g")
+       .attr("class", "grid")
+       .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+       .call(x_gridlines().tickSize(height, 0, 0).tickFormat(""));
+    svg.append("g")            
+       .attr("class", "grid")
+       .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+       .call(y_gridlines().tickSize(-width, 0, 0).tickFormat(""));
+  }
+
+  function x_gridlines() {
+    return d3.svg.axis()
+		 .scale(xScale)
+		 .orient("bottom")
+		 .ticks(5)
+  }
+
+  function y_gridlines() {
+    return d3.svg.axis()
+		 .scale(yScale)
+		 .orient("left")
+		 .ticks(5)
+  }
+
 }

@@ -4,8 +4,8 @@
 
 #tooltip {
   position: absolute;
-  width: 300px;
-  height: 100px;
+  width: 250px;
+  height: 90px;
    background-color: white;
    -webkit-border-radius: 10px;
    -mox-border-radius: 10px;
@@ -29,6 +29,15 @@
 
 .axis tspan {
   font-size: 9px;
+}
+
+.grid .tick {
+    stroke: lightgrey;
+    stroke-opacity: 0.7;
+    shape-rendering: crispEdges;
+}
+.grid path {
+          stroke-width: 0;
 }
 
 #x-label {

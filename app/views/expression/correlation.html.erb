@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head
+  <head>
 
   </head>
   <body>
@@ -55,6 +55,8 @@
 
     <% if @dataset %>
       <div class="row">
+	<div class="small-10 large-10 columns" id="messages">
+	</div>
 	<div class="small-10 large-10 columns" id="graph">
 	  <div id="tooltip" class="hidden">
 	  </div>
@@ -63,6 +65,7 @@
       <%= stylesheet_link_tag "correlation.css" %>
       <%= javascript_include_tag "jquery.js" %>
       <%= javascript_include_tag "d3.v3.min.js" %>
+      <%= javascript_include_tag "simple_statistics.js" %>
       <%= javascript_include_tag "correlation.js" %>
 
       <script>

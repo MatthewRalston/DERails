@@ -21,6 +21,7 @@ class ExpressionController < ApplicationController
           exps=vals.map{|x|x["expression"]}
           {"gene"=>gene,"rep1"=>reps[0],"rep2"=>reps[1],"exp1"=>exps[0],"exp2"=>exps[1]}
         }
+        @params=params.to_hash
       end
     end
   end
