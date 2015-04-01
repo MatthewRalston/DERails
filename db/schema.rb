@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150315203921) do
+ActiveRecord::Schema.define(version: 20150401174206) do
 
   create_table "clusters", force: :cascade do |t|
     t.integer "group",           limit: 4
@@ -48,6 +48,15 @@ ActiveRecord::Schema.define(version: 20150315203921) do
     t.string  "gene",  limit: 10
     t.integer "group", limit: 4
     t.string  "url",   limit: 255
+  end
+
+  create_table "principalcomponents", force: :cascade do |t|
+    t.string  "condition", limit: 10
+    t.integer "replicate", limit: 4
+    t.integer "time",      limit: 4
+    t.float   "pc1",       limit: 24
+    t.float   "pc2",       limit: 24
+    t.float   "pc3",       limit: 24
   end
 
 end

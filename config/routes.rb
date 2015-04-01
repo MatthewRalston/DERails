@@ -2,6 +2,8 @@ Rails.application.routes.draw do
 
 
 
+
+
   root "pages#home"
   #get 'expression/maplot'
   match 'maplot' => 'expression#maplot', via: [:get, :post]
@@ -9,6 +11,9 @@ Rails.application.routes.draw do
   match 'correlation' => 'expression#correlation', via: [:get, :post]
   #get 'cluster/expression_clustering'
   match 'cluster' => 'cluster#expression_clustering', via: [:get, :post]
+  #get 'principalcomponents/pca'
+  match 'pca' => 'principalcomponents#pca', via: :get
+
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

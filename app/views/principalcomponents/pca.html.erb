@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en"
+  <head>
+  </head>
+  <body
+    <h1>Principalcomponents#pca</h1>
+
+    <% if @pca %>
+      <div class="row">
+	<div class="small-10 large-10 columns" id="graph">
+	  <canvas id='canvas3' width='540' height='540'></canvas>
+	</div>
+      </div>
+      <%= javascript_include_tag "canvasXpress.min.js" %>
+      <%= javascript_include_tag "pca.js" %>
+      <script>
+       data = <%= raw @pca.to_json %>
+       $(window).bind("load",pca);
+      </script>
+    <% end %>
+
+
+  </body>
+</html>

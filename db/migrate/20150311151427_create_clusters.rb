@@ -7,6 +7,10 @@ class CreateClusters < ActiveRecord::Migration
       t.float :silhouette
       t.float :dbi
       t.float :dunn
+      t.float :intra_dissim
+      t.text :centroid
+      t.text :all_silhouettes
+      t.text :goterms
     end
   end
 
