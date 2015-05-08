@@ -1,0 +1,79 @@
+<!doctype html>
+<!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
+<html class="no-js" lang="en" data-useragent="Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Clostridium acetobutylicum</title>
+    <meta name="description" content="This is a website that displays annotaiton and experimental data from an RNAseq investiation of Clostridium acetobutylicum."/>
+    <meta name="author" content="Matthew Ralston"/>
+    <meta name="copyright" content="Matthew Ralston, (c) 2015"/>
+    <script>
+     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+     ga('create', 'UA-62768433-1', 'auto');
+     ga('send', 'pageview');
+
+    </script>
+  </head>
+  <body>
+    <!-- M E N U -->
+    <nav class="top-bar" data-topbar>
+      <ul class="title-area">
+	<li class="name">
+	  <h1>
+	    <a href="https://clostridia.dbi.udel.edu">Clostridia</a>
+	  </h1>
+	</li>
+	<li class="toggle-topbar menu-icon"><a href="#"><span>menu</span></a></li>
+      </ul>
+      <section class="top-bar-section">
+	<ul class="right">
+	  <li class="divider"></li>
+	  <li class="has-dropdown">
+	    <a href="#">Menu</a>
+	    <ul class="dropdown">
+	  <li><a href="https://clostridia.dbi.udel.edu/circular">Circular Plot</a></li>
+	  <li class="divider"></li>
+	      <li><label>Scatter Plots</label></li>
+	      <li class="has-dropdown">
+		<a href="#" class="">Differential Expression</a>
+		<ul class="dropdown">
+		  <li><a href="https://clostridia.dbi.udel.edu/maplot">M.A. Plot</a></li>
+		</ul>
+	      </li>
+	      <li><a href="https://clostridia.dbi.udel.edu/correlation">Correlation</a></li>
+	      <li class="divider"></li>
+	      <li><label>Unsupervised Analysis</label></li>
+	      <li><a href="https://clostridia.dbi.udel.edu/pca">P.C.A.</a></li>
+	      <li class="divider"></li>
+	      <li><a href="#">See all &rarr;</a></li>
+	    </ul>
+	  </li>
+	  <li class="divider"></li>
+	  
+	</ul>
+      </section>
+    </nav>
+    <ul class="example-orbit" data-orbit>
+      <li>
+	<a href="http://clostridia.dbi.udel.edu/CBrowser/browse">
+	  <%= image_tag("scroller-circos.png") %>
+	  <!-- <img src="img/scroller.png"/> -->
+	</a>
+	<div class="orbit-caption"> Genome Browser </div> 
+      </li>
+      <li>
+	<a href="http://clostridia.dbi.udel.edu/circular">
+	  <%= image_tag("scroller-circos.png") %>
+	  <!-- <img src="img/scroller.png"/> -->
+	</a>
+	<div class="orbit-caption"> Interactive Circular Plot </div> 
+      </li>
+
+    </ul>
+
+  </body>

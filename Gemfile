@@ -4,7 +4,7 @@ source "https://rubygems.org"
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem "rails", "4.2.0"
 # Use sqlite3 as the database for Active Record
-gem "sqlite3"
+#gem "sqlite3"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
 # Use Uglifier as compressor for JavaScript assets
@@ -42,25 +42,26 @@ group :development, :test do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem "spring"
   gem "annotation"
-  gem "rspec-rails", "~> 3.1.0"
-  gem "capybara"
+#  gem "rspec-rails", "~> 3.1.0"
+#  gem "capybara"
 
-  gem "spring-commands-rspec"
-  gem "spring-commands-cucumber"
+#  gem "spring-commands-rspec"
+#  gem "spring-commands-cucumber"
 end
-
+=begin
 group :development, :test do
   gem "cucumber-rails", require: false
   gem "database_cleaner"
   gem "guard"
   gem "guard-rspec", require: false
   gem "guard-cucumber"
-  gem "capybara-webkit"
+#  gem "capybara-webkit"
   gem "launchy"
-  gem "capybara-screenshot"
-  gem "fastercsv"
+#  gem "capybara-screenshot"
 end
-
+=end
+gem "high_voltage"
+gem "fastercsv"
 #gem "slim-rails" # In case you want slim
 gem "foundation-rails"
 gem "nokogiri" # the bane of all... good xml parsing
@@ -74,10 +75,20 @@ gem 'd3_rails', '~> 3.4'
 # Use simple_form
 gem 'simple_form'
 # Import/export to csv
-gem 'postgres-copy'
+#gem 'postgres-copy'
 # Use MySQL!
 gem "mysql"
 # Use YAML DB
+
+
+
+
+
+
+
+
+
+
 gem "yaml_db"
 # Have composite (multi-column) primary keys!
 gem 'composite_primary_keys'
@@ -85,3 +96,5 @@ gem 'composite_primary_keys'
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
+#Passenger for apache server
+#gem 'passenger'

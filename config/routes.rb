@@ -4,7 +4,7 @@ Rails.application.routes.draw do
 
 
 
-  root "pages#home"
+  #root "pages#home"
   #get 'expression/maplot'
   match 'maplot' => 'expression#maplot', via: [:get, :post]
   #get 'expression/correlation'
