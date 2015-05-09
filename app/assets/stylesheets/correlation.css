@@ -1,6 +1,43 @@
+/*= require foundation */
+
+#form-container {
+  border: 1px solid #404040;
+  margin: 5px;
+}
+
 .hidden {
   display: none;
 }
+
+.row {
+  float: left;
+}
+
+.row-header {
+  width: 80px;
+  height: 50px;
+  margin: 5px !important;
+}
+
+h5 {
+  color: #FFFFFF;
+}
+
+.form-label {
+  width: 80px;
+  margin: 5px !important;
+}
+
+.cond-select {
+  width: 100px;
+  margin: 5px !important;
+}
+
+.num-select {
+  width: 60px;
+  margin: 5px !important;
+}
+
 
 #tooltip {
   position: absolute;

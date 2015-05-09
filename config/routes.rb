@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   #get 'expression/correlation'
   match 'correlation' => 'expression#correlation', via: [:get, :post]
   #get 'cluster/expression_clustering'
-  match 'cluster' => 'cluster#expression_clustering', via: [:get, :post]
+#  match 'cluster' => 'cluster#expression_clustering', via: [:get, :post]
   #get 'principalcomponents/pca'
   match 'pca' => 'principalcomponents#pca', via: :get
 

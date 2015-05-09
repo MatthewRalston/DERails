@@ -1,58 +1,117 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
+<html class="no-js" lang="en" data-useragent="Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)">
   <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Correlation Plot</title>
+    <meta name="description" content="This page allows users to display correlation information of normalized gene expression information between replicates of any stress-time combination."/>
+    <meta name="author" content="Matthew Ralston"/>
+    <meta name="copyright" content="Matthew Ralston, (c) 2015"/>
+    <script>
+     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
+     ga('create', 'UA-62768433-1', 'auto');
+     ga('send', 'pageview');
+
+    </script>
   </head>
   <body>
-
-
-    <h1>Correlation</h1>
-    <p>Find me in app/views/expression/correlation.html.erb</p>
-
-    <%= form_tag({:controller => :expression, :action => :correlation}, :method => :get, :id => 'dataForm') do %>
-      <% if @errors.any? %>
-	<div id="error_explanation">
-	  <h2><%= pluralize(@errors.count,"error") %> prohibited the visualization:</h2>
-	  <ul>
-	    <% @errors.each do |msg| %>
-	      <li><%= msg %></li>
-	    <% end %>
-	  </ul>
-	</div>
-      <% end %>
-      <div class="row" id="conditions">
-	<div class="large-2 small-2 columns">
-	  <%= label_tag :time, "Time"%>
-	</div>
-	<div class="large-2 small-2 columns">
-	  <%= select_tag(:time, options_for_select(@times)) %>
-	</div>
-	<div class="large-2 small-2 columns">
-	  <%= label_tag :condition, "Condition"%>
-	</div>
-	<div class="large-2 small-2 columns">
-	  <%= select_tag(:condition, options_for_select(@conditions)) %>
-	</div>
+    <!-- M E N U -->
+    <nav class="top-bar" data-topbar>
+      <ul class="title-area">
+	<li class="name">
+	  <h1>
+	    <a href="https://clostridia.dbi.udel.edu/correlation">Correlation</a>
+	  </h1>
+	</li>
+	<li class="toggle-topbar menu-icon"><a href="#"><span>menu</span></a></li>
+      </ul>
+      <section class="top-bar-section">
+	<ul class="right">
+	  <li class="divider"></li>
+	  <li class="name">
+	    <h2>
+	      <a href="https://clostridia.dbi.udel.edu">Home</a>
+	    </h2>
+	  </li>
+	  <li class="divider"></li>
+	  <li class="has-dropdown">
+	    <a href="#">Menu</a>
+	    <ul class="dropdown">
+	  <li><a href="https://clostridia.dbi.udel.edu/circular">Circular Plot</a></li>
+	  <li class="divider"></li>
+	      <li><label>Scatter Plots</label></li>
+	      <li class="has-dropdown">
+		<a href="#" class="">Differential Expression</a>
+		<ul class="dropdown">
+		  <li><a href="https://clostridia.dbi.udel.edu/maplot">M.A. Plot</a></li>
+		</ul>
+	      </li>
+	      <li><a href="https://clostridia.dbi.udel.edu/correlation">Correlation</a></li>
+	      <li class="divider"></li>
+	      <li><label>Unsupervised Analysis</label></li>
+	      <li><a href="https://clostridia.dbi.udel.edu/pca">P.C.A.</a></li>
+	      <li class="divider"></li>
+	      <li><a href="#">See all &rarr;</a></li>
+	    </ul>
+	  </li>
+	  <li class="divider"></li>
+	  
+	</ul>
+      </section>
+    </nav>
+    <div id="dataSub-container">
+      <div class="row" id="form-container">
+	<%= form_tag({:controller => :expression, :action => :correlation}, :method => :get, :id => 'dataForm') do %>
+	  <% if @errors.any? %>
+	    <div id="error_explanation">
+	      <h2><%= pluralize(@errors.count,"error") %> prohibited the visualization:</h2>
+	      <ul>
+		<% @errors.each do |msg| %>
+		  <li><%= msg %></li>
+		<% end %>
+	      </ul>
+	    </div>
+	  <% end %>
+	  <div id="formArea">
+	    <div class="row" id="conditions">
+	      <div class="large-1 small-1 columns">
+		<%= label_tag :time, "Time", class: "form-label inline" %>
+	      </div>
+	      <div class="large-1 small-1 columns">
+		<%= select_tag(:time, options_for_select(@times), class: "num-select") %>
+	      </div>
+	      <div class="large-1 small-1 columns">
+		<%= label_tag :condition, "Condition", class: "form-label inline" %>
+	      </div>
+	      <div class="large-2 small-2 columns">
+		<%= select_tag(:condition, options_for_select(@conditions), class: "cond-select") %>
+	      </div>
+	      <div class="large-2 small-2 columns">
+		<%= label_tag :replicate1, "Replicate 1", class: "form-label inline" %>
+	      </div>
+	      <div class="large-1 small-1 columns">
+		<%= select_tag(:replicate1, options_for_select(@replicates), class: "num-select") %>
+	      </div>
+	      <div class="large-2 small-2 columns">
+		<%= label_tag :replicate2, "Replicate 2", class: "form-label inline"%>
+	      </div>
+	      <div class="large-1 small-1 columns end">
+		<%= select_tag(:replicate2, options_for_select(@replicates), class: "num-select") %>
+	      </div>
+	    </div>
+	    <div class="row"
+	      <div class="large-2 small-2 columns">
+		<%= submit_tag "Submit", :name => nil, :class => "submit" %>
+	      </div>
+	    </div>
+	<% end %>
       </div>
-      <div class="row" id="replicates">
-	<div class="large-2 small-2 columns">
-	  <%= label_tag :replicate1, "Replicate 1"%>
-	</div>
-	<div class="large-1 small-1 columns">
-	  <%= select_tag(:replicate1, options_for_select(@replicates)) %>
-	</div>
-	<div class="large-2 small-2 columns">
-	  <%= label_tag :replicate2, "Replicate 2"%>
-	</div>
-	<div class="large-1 small-1 columns">
-	  <%= select_tag(:replicate2, options_for_select(@replicates)) %>
-	</div>
-	<div class="large-2 small-2 columns">
-	  <%= submit_tag "Submit", :name => nil, :class => "submit" %>
-	</div>
-      </div>
-    <% end %>
-
+    </div>
     <% if @dataset %>
       <div class="row">
 	<div class="small-10 large-10 columns" id="messages">
@@ -62,18 +121,15 @@
 	  </div>
 	</div>
       </div>
-      <%= stylesheet_link_tag "correlation.css" %>
       <%= javascript_include_tag "jquery.js" %>
       <%= javascript_include_tag "d3.v3.min.js" %>
       <%= javascript_include_tag "simple_statistics.js" %>
       <%= javascript_include_tag "correlation.js" %>
-
       <script>
        dataset = <%= raw @dataset.to_json %>;
        $(window).bind("load",correlation)
-
       </script>
-      
     <% end %>
+    <%= stylesheet_link_tag "correlation.css" %>
   </body>
 </html>
