@@ -3,14 +3,16 @@ class ExpressionController < ApplicationController
   def initialize
     @times = %w(15 75 150 270)
     @conditions = %w(Untreated Butyrate Butanol)
+    @textimes = %w(75 270)
     @replicates = [1,2,3]
     @minpval = 10**-10.to_f
   end
 
   def correlation
-    puts(params)
     @errors = []
     if params[:time]
+      rep1=params[:replicate1].to_i
+      rep2=params[:replicate2].to_i
       check_correlation_params(params)
       unless @errors.any? 
         @dataset=Expression.select("gene, expression, replicate").where(time: params[:time], condition: params[:condition])
@@ -19,7 +21,8 @@ class ExpressionController < ApplicationController
           .map{|gene,vals|
           reps=vals.map{|x|x["replicate"]}
           exps=vals.map{|x|x["expression"]}
-          {"gene"=>gene,"rep1"=>reps[0],"rep2"=>reps[1],"exp1"=>exps[0],"exp2"=>exps[1]}
+          #puts("#{reps.to_s}\t#{exps.to_s}")
+          {"gene"=>gene,"rep1"=>rep1,"rep2"=>rep2,"exp1"=>exps[rep1-1],"exp2"=>exps[rep2-1]}
         }
         @params=params.to_hash
       end
@@ -27,16 +30,19 @@ class ExpressionController < ApplicationController
   end
 
   def maplot
-    puts(params)
     @errors = []
     if params[:time1]
       check_maplot_params(params)
+      factorialcombo=params.keys - %w(pval foldchange gene expression controller action utf8)
+      factorialcombo.each {|key| factorialcombo.delete(key) if params[key] == ""}
       unless @errors.any?
         @dataset = diffexp_query(params).map{|x| x.as_json.compact}
           .group_by{|x| x["gene"]}
           .map{|gene,vals| 
           exps = vals.map{|x| x["expression"] + 1}
-          {"gene"=>gene,"foldchange"=>vals[0]["foldchange"],"pval"=>(vals[0]["pval"] < @minpval ? @minpval: vals[0]["pval"]),"expression"=>exps.reduce(:+)/exps.size.to_f}
+          dict={"gene"=>gene,"foldchange"=>vals[0]["foldchange"],"pval"=>(vals[0]["pval"] < @minpval ? @minpval: vals[0]["pval"]),"expression"=>exps.reduce(:+)/exps.size.to_f}
+          factorialcombo.each {|key| dict[key] = vals[0][key]}
+          dict
         }
         
       end
@@ -49,11 +55,11 @@ class ExpressionController < ApplicationController
   def diffexp_query(params)
     query = "INNER JOIN expressions ON expressiondifferences.gene = expressions.gene "
     dataset = if params[:time1] == "" && params[:time2] == ""
-                Expressiondifference.joins(query+"AND expressiondifferences.condition1 = expressions.condition").where(condition1: params[:condition1], condition2: params[:condition2]).select("expressions.expression,expressions.gene,expressiondifferences.foldchange,expressiondifferences.pval")
+                Expressiondifference.joins(query+"AND expressiondifferences.condition1 = expressions.condition").where(condition1: params[:condition2], condition2: params[:condition1]).select("expressiondifferences.condition1,expressiondifferences.condition2,expressions.expression,expressions.gene,expressiondifferences.foldchange,expressiondifferences.pval")
               elsif params[:condition1] == "" && params[:condition2] == ""
-                Expressiondifference.joins(query+"AND expressiondifferences.time1 = expressions.time").where(time1: params[:time1], time2: params[:time2]).select("expressions.expression,expressions.gene,expressiondifferences.foldchange,expressiondifferences.pval")
+                Expressiondifference.joins(query+"AND expressiondifferences.time1 = expressions.time").where(time1: params[:time2], time2: params[:time1]).select("expressiondifferences.time1,expressiondifferences.time2,expressions.expression,expressions.gene,expressiondifferences.foldchange,expressiondifferences.pval")
               else
-                Expressiondifference.joins(query+"AND expressiondifferences.time1 = expressions.time AND expressiondifferences.condition1 = expressions.condition").where(time1: params[:time1], time2: params[:time2], condition1: params[:condition1], condition2: params[:condition2]).select("expressions.expression,expressions.gene,expressiondifferences.foldchange,expressiondifferences.pval")
+                Expressiondifference.joins(query+"AND expressiondifferences.time1 = expressions.time AND expressiondifferences.condition1 = expressions.condition").where(time1: params[:time2], time2: params[:time1], condition1: params[:condition2], condition2: params[:condition1]).select("expressiondifferences.condition1,expressiondifferences.condition2,expressiondifferences.time1,expressiondifferences.time2,expressions.expression,expressions.gene,expressiondifferences.foldchange,expressiondifferences.pval")
               end
     dataset
   end
@@ -63,6 +69,7 @@ class ExpressionController < ApplicationController
     @errors << "Invalid condition parameter: \"#{params[:condition]}\"" unless @conditions.include?(params[:condition])
     @errors << "Invalid replicate 1: \"#{params[:replicate1]}\"" unless @replicates.include?(params[:replicate1].to_i)
     @errors << "Invalid replicate 2: \"#{params[:replicate2]}\"" unless @replicates.include?(params[:replicate2].to_i)
+    @errors << "Time point #{params[:time]} does not have a third replicate" if [params[:replicate1],params[:replicate2]].include?("3") && !@textimes.include?(params[:time]) 
   end
 
   def check_maplot_params(params)

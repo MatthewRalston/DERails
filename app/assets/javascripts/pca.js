@@ -1,3 +1,6 @@
+//= require foundation
+$(document).foundation();
+
 function pca() {
 
   var pcacanvas = new CanvasXpress("canvas3",
